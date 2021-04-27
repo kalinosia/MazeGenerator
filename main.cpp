@@ -7,29 +7,44 @@
 
 
 class Square {
-public:
+protected:
     int x, y;
-    sf::RectangleShape square{ (sf::Vector2f(10, 10)) };
-    //Square();
+public:
+    sf::RectangleShape shape{ (sf::Vector2f(10, 10)) };
+    Square() {
+        x = 0;
+        y = 0;
+        shape.setFillColor(sf::Color::Yellow);
+        shape.setPosition(x, y);
+    }
     Square(int x, int y) {
         this->x = x;
         this->y = y;
         //square=(sf::Vector2f(10, 10));
-        square.setFillColor(sf::Color::Yellow);
-        square.setPosition(x, y);
+        shape.setFillColor(sf::Color::White);
+        shape.setPosition(x, y);
     }
-
-    //sf::RectangleShape square() {
-        //sf::RectangleShape square(sf::Vector2f(10, 10));
-        //square.setFillColor(sf::Color::White);
-        //square.setPosition(x, y);
-      //  return square;
-    //}
-    //void draw(sf::RenderWindow wind) {
-      //  wind.draw(Square);
-    //}
 };
 
+class Line : public Square {
+public:
+    //sf::RectangleShape shape{ (sf::Vector2f(2, 10)) };// .setFillColor.(sf::Color::Black);
+    Line(int x, int y, bool vh){
+        this->x = x;
+        this->y = y;
+        shape.setFillColor(sf::Color::Black);
+        shape.setPosition(x, y);
+        if (vh) shape.setSize(sf::Vector2f(2, 12));
+        else if (!(vh)) shape.setSize(sf::Vector2f(12, 2));
+    }
+    
+};
+/*
+class LineHorizontal : public Square {
+public:
+    sf::RectangleShape shape{ (sf::Vector2f(10, 2)) };
+};
+*/
 int main()
 {
     srand(time(NULL));
@@ -39,11 +54,10 @@ int main()
     //sf::RectangleShape square(sf::Vector2f(10, 10));
     //square.setFillColor(sf::Color::White);
     //square.setPosition(0,0);
-    Square* squares[20*20];// = new Square; LATER??
-    //std::cout << squares[0]<< std::endl;
+    Square* squares[20*20];
+    Line* lines[20 * 20];
 
-    //for (int i = 0; i < 20 * 20; i++) squares[i] = NULL;
-    
+    /*
     sf::RectangleShape lineB(sf::Vector2f(2, 12));
     lineB.setFillColor(sf::Color::Blue);
     lineB.setPosition(10, 0);
@@ -51,14 +65,13 @@ int main()
     sf::RectangleShape lineW(sf::Vector2f(12, 2));
     lineW.setFillColor(sf::Color::Green);
     lineW.setPosition(0, 10);
-
+    */
     //window.draw(square);
     //window.draw(lineB);
     //window.draw(lineW); 
 
     
-    int i = 0;
-    int j = 0;
+    
     int h;
     bool draw_maze = true;
     while (window.isOpen())
@@ -70,10 +83,11 @@ int main()
                 window.close();
         }
         // window.clear();
-      
+      //.............................DRAWING....................MAZE.....................
         while (draw_maze) {
             draw_maze = false;
             window.clear(sf::Color::White);
+
             for (int i = 0; i < 20; i++) {
                 for (int j = 0; j < 20; j++) {
 
@@ -81,19 +95,15 @@ int main()
                     h = rand() % 2;
                     //std::cout << h << std::endl;
 
-                    squares[(20*i) + j ] = new Square(i * 10 + 2 * i, j * 10 + 2 * j);
+                    squares[(20*i) + j ] = new Square(j * 10 + 2 * j, i * 10 + 2 * i);
 
                     //window.draw(square);
                     switch (h) {
                     case 0:
-                        lineB.setPosition(10 + i * 10 + 2 * i, j * 10 + 2 * j);
-                        window.draw(lineB);
-                        //std::cout << "case 0\n";
+                        lines[(20 * i) + j]=new Line(j * 10 + 2 * j, i * 10 + 2 * i+10, (bool) h);
                         break;
                     case 1:
-                        lineW.setPosition(i * 10 + 2 * i, 10 + j * 10 + 2 * j);
-                        window.draw(lineW);
-                        //std::cout << "case 1\n";
+                        lines[(20 * i) + j] = new Line(j * 10 + 2 * j,  i * 10 + 2 * i, (bool) h);
                         break;
                     default:
                         //std::cout << "case def\n";
@@ -103,15 +113,14 @@ int main()
                     
                     for (int k = 0;  k < ((20*i)+(j+1)); k++) {
                         
-                        window.draw(squares[k]->square);
-
-
+                        window.draw(squares[k]->shape);
+                        window.draw(lines[k]->shape);
                     }
                     window.display();
-                    Sleep(100);
+                    Sleep(10);
                     //std::cout << ((20 * i) + j) << std::endl;
                 }
-                if (i == 10) break;
+                //if (i == 10) break;
             }
         }
         //window.display();
