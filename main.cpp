@@ -48,14 +48,20 @@ public:
 int main()
 {
     srand(time(NULL));
-
-    sf::RenderWindow window(sf::VideoMode(400, 400), "Maze Generator!", sf::Style::Titlebar | sf::Style::Close);
+    int size;
+    std::cout << "How big should be your maze, give me numbers (max 50): ";
+    std::cin >> size;
+    
+    //int size;
+    //scanf("%i", size);
+    
+    sf::RenderWindow window(sf::VideoMode(size*10+2, size*10+2), "Maze Generator!", sf::Style::Titlebar | sf::Style::Close);
     
     //sf::RectangleShape square(sf::Vector2f(10, 10));
     //square.setFillColor(sf::Color::White);
     //square.setPosition(0,0);
-    Square* squares[20*20];
-    Line* lines[20 * 20];
+    Square* squares[50*50];
+    Line* lines[50*50];
 
     /*
     sf::RectangleShape lineB(sf::Vector2f(2, 12));
@@ -89,21 +95,21 @@ int main()
             window.clear(sf::Color::White);
 
             for (int i = 0; i < 20; i++) {
-                for (int j = 0; j < 20; j++) {
+                for (int j = 0; j < size; j++) {
 
 
                     h = rand() % 2;
                     //std::cout << h << std::endl;
 
-                    squares[(20*i) + j ] = new Square(j * 10 + 2 * j, i * 10 + 2 * i);
+                    squares[(size*i) + j ] = new Square(j * 10 + 2 * j, i * 10 + 2 * i);
 
                     //window.draw(square);
                     switch (h) {
                     case 0:
-                        lines[(20 * i) + j]=new Line(j * 10 + 2 * j, i * 10 + 2 * i+10, (bool) h);
+                        lines[(size * i) + j]=new Line(j * 10 + 2 * j, i * 10 + 2 * i+10, (bool) h);
                         break;
                     case 1:
-                        lines[(20 * i) + j] = new Line(j * 10 + 2 * j,  i * 10 + 2 * i, (bool) h);
+                        lines[(size * i) + j] = new Line(j * 10 + 2 * j,  i * 10 + 2 * i, (bool) h);
                         break;
                     default:
                         //std::cout << "case def\n";
@@ -111,7 +117,7 @@ int main()
                     }
                     
                     
-                    for (int k = 0;  k < ((20*i)+(j+1)); k++) {
+                    for (int k = 0;  k < ((size*i)+(j+1)); k++) {
                         
                         window.draw(squares[k]->shape);
                         window.draw(lines[k]->shape);
