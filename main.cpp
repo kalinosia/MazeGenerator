@@ -11,6 +11,7 @@ protected:
     int x, y;
 public:
     sf::RectangleShape shape{ (sf::Vector2f(10, 10)) };
+    
     Square() {
         x = 0;
         y = 0;
@@ -60,8 +61,13 @@ int main()
     //sf::RectangleShape square(sf::Vector2f(10, 10));
     //square.setFillColor(sf::Color::White);
     //square.setPosition(0,0);
-    Square* squares[50*50];
-    Line* lines[50*50];
+    // 
+    // //Test* test[N]; ->test[(size * i) + j]=new Test(j * 10 + 2 * j, i * 10 + 2 * i+10, (bool) h); WTF
+    //Test* arr = (Test*)malloc(sizeof(Test) * N); //without default constructor
+    //Test* arr = new Test[N];                    //default construcctor
+    //Square** squares=new Square*[size*size];
+    Square** squares=new Square*[size*size]; 
+    Line** lines=new Line*[size*size]; //without default constructor
 
     /*
     sf::RectangleShape lineB(sf::Vector2f(2, 12));
@@ -94,22 +100,22 @@ int main()
             draw_maze = false;
             window.clear(sf::Color::White);
 
-            for (int i = 0; i < 20; i++) {
+            for (int i = 0; i < size; i++) {
                 for (int j = 0; j < size; j++) {
 
 
                     h = rand() % 2;
                     //std::cout << h << std::endl;
 
-                    squares[(size*i) + j ] = new Square(j * 10 + 2 * j, i * 10 + 2 * i);
+                    squares[(size*i) + j ]= new Square(j * 10 + 2 * j, i * 10 + 2 * i);
 
                     //window.draw(square);
                     switch (h) {
                     case 0:
-                        lines[(size * i) + j]=new Line(j * 10 + 2 * j, i * 10 + 2 * i+10, (bool) h);
+                        lines[(size * i) + j]= new Line(j * 10 + 2 * j, i * 10 + 2 * i+10, (bool) h);
                         break;
                     case 1:
-                        lines[(size * i) + j] = new Line(j * 10 + 2 * j,  i * 10 + 2 * i, (bool) h);
+                        lines[(size * i) + j] =new Line(j * 10 + 2 * j,  i * 10 + 2 * i, (bool) h);
                         break;
                     default:
                         //std::cout << "case def\n";
