@@ -2,7 +2,7 @@
 #include <stdio.h> 
 #include <stdlib.h>     /* srand, rand */
 #include <time.h> 
-#include <iostream>
+#include <iostream> //cout
 #include <windows.h> //sleep
 
 
@@ -29,15 +29,25 @@ public:
 
 class Line : public Square {
 public:
+    int wall;
+public:
     //sf::RectangleShape shape{ (sf::Vector2f(2, 10)) };// .setFillColor.(sf::Color::Black);
-    Line(int x, int y, bool vh){
+    Line(int x, int y, int vh){
         this->x = x;
         this->y = y;
         shape.setFillColor(sf::Color::Black);
         shape.setPosition(x, y);
-        if (vh) shape.setSize(sf::Vector2f(2, 12));
-        else if (!(vh)) shape.setSize(sf::Vector2f(12, 2));
+        //  _           up 0 
+        // |_|   left 3 down 2 right 1
+  
+        if (vh==0 or vh==2) shape.setSize(sf::Vector2f(14, 2));
+        else if (vh==1 or vh==3) shape.setSize(sf::Vector2f(2, 12));
+        wall = vh;
     }
+    int check_wall(){ //class array function returning..with input array n
+        return wall;
+    };
+
     
 };
 /*
@@ -99,30 +109,52 @@ int main()
         while (draw_maze) {
             draw_maze = false;
             window.clear(sf::Color::White);
-
+            bool found_new_wall = false;
             for (int i = 0; i < size; i++) {
                 for (int j = 0; j < size; j++) {
 
-
-                    h = rand() % 2;
-                    //std::cout << h << std::endl;
-
-                    squares[(size*i) + j ]= new Square(j * 10 + 2 * j, i * 10 + 2 * i);
-
-                    //window.draw(square);
-                    switch (h) {
-                    case 0:
-                        lines[(size * i) + j]= new Line(j * 10 + 2 * j, i * 10 + 2 * i+10, (bool) h);
-                        break;
-                    case 1:
-                        lines[(size * i) + j] =new Line(j * 10 + 2 * j,  i * 10 + 2 * i, (bool) h);
-                        break;
-                    default:
-                        //std::cout << "case def\n";
-                        continue;
+                    while (!found_new_wall) {
+                        h = rand() % 4;
+         
+                        switch (h) {
+                        case 0:
+                            if (i > 0){
+                                if (lines[((size * i) + j) - size]->wall == 2) break;
+                            }
+                            else if (i == 0) break;
+                            else {
+                                found_new_wall = true;
+                                break;
+                            }
+                        case 1:
+                            if (j - 1 == size) break;
+                            found_new_wall = true;
+                            break;
+                        case 2:
+                            if (j - 1 == size) break;
+                            found_new_wall = true;
+                            break;
+                        case 3:
+                            if (j == 0) break;
+                            else if (lines[((size * i) + j) - 1]->wall == 1) break;
+                            else {
+                                found_new_wall = true;
+                                break;
+                            }
+                        default:
+                            continue;
+                        }
                     }
-                    
-                    
+                    std::cout << h << std::endl;
+                    squares[(size * i) + j] = new Square(j * 10 + 2 * j, i * 10 + 2 * i);
+
+                    if (h == 0) lines[(size * i) + j] = new Line(j * 10 + 2 * j-2, i * 10 + 2 * i -2, h); //new
+                    else if (h == 1) lines[(size * i) + j] = new Line(j * 10 + 2 * j-2, i * 10 + 2 * i, h);
+                    else if (h == 2) lines[(size * i) + j] = new Line(j * 10 + 2 * j-2, i * 10 + 2 * i + 10, h);
+                    else if (h == 3) lines[(size * i) + j] = new Line(j * 10 + 2 * j -2, i * 10 + 2 * i, h);
+                    else std::cout << "ERROR!!!!" << std::endl;
+
+
                     for (int k = 0;  k < ((size*i)+(j+1)); k++) {
                         
                         window.draw(squares[k]->shape);
@@ -130,6 +162,7 @@ int main()
                     }
                     window.display();
                     Sleep(10);
+                    found_new_wall = false;
                     //std::cout << ((20 * i) + j) << std::endl;
                 }
                 //if (i == 10) break;
