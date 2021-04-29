@@ -59,12 +59,20 @@ public:
 int main()
 {
     srand(time(NULL));
+
+    //int WINAPI GetSystemMetrics(SM_CYBORDER);
+    //size_t width = (size_t)GetSystemMetrics(SM_CXSCREEN);
+    size_t height = (size_t)GetSystemMetrics(SM_CYSCREEN);
+
+    //std::cout << "width = " << width << "\n";
+    std::cout << "height = " << height << std::endl;
+    
+    
     int size;
-    std::cout << "How big should be your maze, give me numbers (max 50): ";
+    std::cout << "How big should be your maze, give me numbers. [Max = your screen height / 12 (round down)]:  ";
     std::cin >> size;
     
-    //int size;
-    //scanf("%i", size);
+    if (height < size * 12) return 1; std::cout << "To big for your screen!\n";
     
     sf::RenderWindow window(sf::VideoMode(size*10+2, size*10+2), "Maze Generator!", sf::Style::Titlebar | sf::Style::Close);
     
@@ -163,10 +171,10 @@ int main()
                     window.display();
                     Sleep(10);
                     found_new_wall = false;
-                    //std::cout << ((20 * i) + j) << std::endl;
+                    
                 }
-                //if (i == 10) break;
             }
+            draw_maze = false;
         }
         //window.display();
          
