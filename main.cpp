@@ -4,7 +4,7 @@
 #include <time.h> 
 #include <iostream> //cout
 #include <windows.h> //sleep
-
+#include <stack>
 
 class Square {
 protected:
@@ -24,6 +24,10 @@ public:
         //square=(sf::Vector2f(10, 10));
         shape.setFillColor(sf::Color::White);
         shape.setPosition(x, y);
+    }
+    void square_color(bool defcol) {
+        if (defcol==0) shape.setFillColor(sf::Color::White);
+        if (defcol == 1) shape.setFillColor(sf::Color::Red);
     }
 };
 
@@ -50,6 +54,7 @@ public:
 
     
 };
+
 /*
 class LineHorizontal : public Square {
 public:
@@ -72,13 +77,14 @@ int main()
     std::cout << "How big should be your maze, give me numbers. [Max = your screen height / 12 (round down)]:  ";
     std::cin >> size;
     
-    if (height < size * 12) return 1; std::cout << "To big for your screen!\n";
+    if (height < size * 12) { return 1; std::cout << "To big for your screen!\n"; }
     
-    sf::RenderWindow window(sf::VideoMode(size*10+2, size*10+2), "Maze Generator!", sf::Style::Titlebar | sf::Style::Close);
+    sf::RenderWindow window(sf::VideoMode(size*(10+2), size*(10+2)), "Maze Generator!", sf::Style::Titlebar | sf::Style::Close);
     
     //sf::RectangleShape square(sf::Vector2f(10, 10));
     //square.setFillColor(sf::Color::White);
     //square.setPosition(0,0);
+    // //window.draw(square);
     // 
     // //Test* test[N]; ->test[(size * i) + j]=new Test(j * 10 + 2 * j, i * 10 + 2 * i+10, (bool) h); WTF
     //Test* arr = (Test*)malloc(sizeof(Test) * N); //without default constructor
@@ -87,21 +93,8 @@ int main()
     Square** squares=new Square*[size*size]; 
     Line** lines=new Line*[size*size]; //without default constructor
 
-    /*
-    sf::RectangleShape lineB(sf::Vector2f(2, 12));
-    lineB.setFillColor(sf::Color::Blue);
-    lineB.setPosition(10, 0);
-
-    sf::RectangleShape lineW(sf::Vector2f(12, 2));
-    lineW.setFillColor(sf::Color::Green);
-    lineW.setPosition(0, 10);
-    */
-    //window.draw(square);
-    //window.draw(lineB);
-    //window.draw(lineW); 
-
     
-    
+   
     int h;
     bool draw_maze = true;
     while (window.isOpen())
@@ -155,6 +148,9 @@ int main()
                     }
                     std::cout << h << std::endl;
                     squares[(size * i) + j] = new Square(j * 10 + 2 * j, i * 10 + 2 * i);
+                    //HERE DEFCOL -working!!
+                    //if (i == 3) squares[(size * i) + j]->square_color(1);
+
 
                     if (h == 0) lines[(size * i) + j] = new Line(j * 10 + 2 * j-2, i * 10 + 2 * i -2, h); //new
                     else if (h == 1) lines[(size * i) + j] = new Line(j * 10 + 2 * j-2, i * 10 + 2 * i, h);
@@ -162,7 +158,7 @@ int main()
                     else if (h == 3) lines[(size * i) + j] = new Line(j * 10 + 2 * j -2, i * 10 + 2 * i, h);
                     else std::cout << "ERROR!!!!" << std::endl;
 
-
+                  
                     for (int k = 0;  k < ((size*i)+(j+1)); k++) {
                         
                         window.draw(squares[k]->shape);
@@ -176,6 +172,75 @@ int main()
             }
             draw_maze = false;
         }
+        //...............................END DRAWING..................START SOLVE.....................................
+        /*
+        void draw_maze_void() {
+            for (int k = 0; k < (size * size); k++) {
+
+                window.draw(squares[k]->shape);
+                window.draw(lines[k]->shape);
+                window.display();
+            }
+        };
+        */
+        if (!draw_maze) {
+            int x = 0;
+            int y = 0;
+            bool free_wall[4];
+            std::stack < int > visited;
+            std::stack < std::pair<int, bool[4]> > cross; //where, which site (0up,1right,2down,3left)
+            for (int q = 0; q < size; q++) {
+                if ((lines[q]->wall == 2) or (lines[1, q]->wall == 0)) continue;
+                else {
+                    visited.push(q);
+                    squares[q]->square_color(1);
+                    x = q+size;
+                    while (true) {
+                        //UP
+                        if (x >= size * 2) {//size ->10 11 do wyjœcia Ÿle 21 ok
+                            if (lines[x]->wall == 0 or lines[x - size]->wall == 2) free_wall[0] = false;
+                            else free_wall[0] = true;
+                        }
+                        else free_wall[0] = false;
+
+                        //prawa
+                        if (lines[x]->wall == 1 or lines[x + 1]->wall == 3) free_wall[1] = false;
+                        else free_wall[1] = true;
+                            
+                        //dó³ 
+                        if (lines[x]->wall == 2 or lines[x + size]->wall == 0) free_wall[2] = false;
+                        else free_wall[2] = true;
+
+                        //sprawdŸ czy lewa wolna
+                        if (lines[x]->wall == 3 or lines[x - 1]->wall == 1) free_wall[3] = false;
+                        else free_wall[3] = true;
+                        
+                        h = 0; //use variable which is free
+                        if(free_wall[0]) h++;
+                        if (free_wall[1]) h++;
+                        if (free_wall[2]) h++;
+                        if (free_wall[3]) h++;
+
+                        //if ( h++ >=2) cross//skrzy¿ownie
+
+                    }
+                    
+                    for (int k = 0; k < (size * size); k++) {
+
+                        window.draw(squares[k]->shape);
+                        window.draw(lines[k]->shape);
+                        window.display();
+               
+                    }
+                    Sleep(100);
+                    squares[q]->square_color(0);
+                }
+
+
+            }
+            ///?????
+        }
+        //*/
         //window.display();
          
         
