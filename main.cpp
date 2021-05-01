@@ -65,16 +65,16 @@ int main()
     size_t height = (size_t)GetSystemMetrics(SM_CYSCREEN);
 
     //std::cout << "width = " << width << "\n";
-    std::cout << "height = " << height << std::endl;
+    std::cout << "Your screen height = " << height << std::endl;
     
     
     int size;
-    std::cout << "How big should be your maze, give me numbers. [Max = your screen height / 12 (round down)]:  ";
+    std::cout << "How big should be your maze, give me numbers. \n[Min=10; Max = your screen height / 12 (round down)]:  ";
     std::cin >> size;
     
-    if (height < size * 12) return 1; std::cout << "To big for your screen!\n";
-    
-    sf::RenderWindow window(sf::VideoMode(size*10+2, size*10+2), "Maze Generator!", sf::Style::Titlebar | sf::Style::Close);
+    if (height < size * 12) { return 1; std::cout << "To big for your screen!\n"; }
+    if (size < 10) { return 1; std::cout << "To small number!\n"; }
+    sf::RenderWindow window(sf::VideoMode(size*(10+2), size*(10+2)), "Maze Generator!", sf::Style::Titlebar | sf::Style::Close);
     
     //sf::RectangleShape square(sf::Vector2f(10, 10));
     //square.setFillColor(sf::Color::White);
